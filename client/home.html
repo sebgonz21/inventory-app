@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>Inventory</title>
+    
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        
+    
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+        
+        
+        <script src="client/script.js"></script>
+        <script src="client/modaljs.js"></script>
+       <style>
+            header{
+                float: none;
+                position: static;
+                width: auto;
+
+            }
+            footer{
+                float: none;
+                position: static;
+                width: auto;
+            }
+
+            .input-field{
+                margin-bottom: 10px;
+            }
+
+            .alert {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+       </style>
+       
+</head>
+<body>
+   
+    
+    <header class="w3-container w3-theme w3-padding" id="myHeader">
+        <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+        <div class="w3-center">
+            
+            <h1 class="w3-xxxlarge w3-animate-bottom">Inventory</h1>
+            <div class="w3-padding-32"></div>
+        </div>
+    </header>
+
+
+
+<!-- MODALS -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class='col-xs-12'>
+                    <h4 class="modal-title" id="addItemTitle">Add Item</h4>
+                </div>                                
+            </div>
+            <div class="modal-body">
+                
+                <div class="">
+
+                    <label for="add_barcode">Barcode</label>
+                    <input type="text" id="add_barcode" class="form-control input-field" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="12345">
+                    
+                    <label for="add_name">Name</label>
+                    <input type="text" id="add_name" class="form-control input-field" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="abcd">
+
+                    <label for="add_quantity">Quantity</label>
+                    <input type="number" class="form-control input-field" id="add_quantity" aria-describedby="add_quantity" placeholder="0">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="clearInputs(['add_quantity','add_quantity'])" >Close</button>
+                <button type="button" class="btn btn-primary" onClick="addItem()">Add Items</button>
+            </div>
+            <div class="alert alert-success alert-dismissible fade in out added_alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Success!</strong><span id="message"></span>
+            </div> 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="lookupModal" tabindex="-1" role="dialog" aria-labelledby="lookupModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class='col-xs-12'>
+                    <h4 class="modal-title" id="lookupTitle">Lookup Item</h4>
+                </div>            
+            </div>
+            <div class="modal-body">
+                
+                <div>
+
+                    <label for="barcode">Barcode</label>
+                    <input type="text" id="lookup_barcode" class="form-control input-field" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="12345">
+
+                </div>
+                <div id="result">
+                    
+                    
+                </div>
+                <div id="result_template">
+                    
+                    <label for="{input_id}" style="display:none">{Title}</label>
+                    <input type="text" id="{input_id}" class="form-control input-field" style="display:none" readonly aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder=""/>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick="clearInputs(['lookup_barcode'])" >Close</button>
+                <button type="button" class="btn btn-primary" onClick="getItem()">Lookup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- BODY -->
+
+    <div class="w3-row-padding w3-center w3-margin-top">
+        
+        <div class="w3-third" data-toggle="modal" data-target="#addModal" onClick="openModal('addModal')">
+            <div class="w3-card w3-container" style="min-height:300px">
+                <h3>Add</h3><br>
+                <i class="glyphicon glyphicon-barcode w3-margin-bottom " style="font-size:120px;" ></i>
+                
+                <p>Scan item</p>
+                                        
+            </div>
+        </div>
+    
+        <div class="w3-third"  data-toggle="modal" data-target="#lookupModal" onClick="openModal('lookupModal')">
+            <div class="w3-card w3-container" style="min-height:300px" >
+                <h3>Lookup</h3><br>
+                <div id="lookup_strip">
+                    <ul class="thumbnails"></ul>
+                </div>
+                <i class="glyphicon glyphicon-search w3-margin-bottom" style="font-size:120px; color:royalblue"></i>
+                <p>Lookup item</p>
+            </div>
+        </div>
+    </div>
+    <button class="testbtn" style="display:none"></button>
+    
+    <!-- BODY -->
+    
+    <!-- Footer -->
+    <footer class="w3-container w3-theme-dark w3-padding-16"></footer>
+
+</body>
+</html>
+
